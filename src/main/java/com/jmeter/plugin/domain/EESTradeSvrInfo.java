@@ -1,102 +1,52 @@
 package com.jmeter.plugin.domain;
 
+import com.sun.jna.Structure;
+
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author admin
  */
-public class EESTradeSvrInfo {
+public class EESTradeSvrInfo extends Structure {
 
-    // 使用String类型存储IP地址
-    private String mRemoteTradeIp;
-    private String mRemoteQueryIp;
-    private String mLocalTradeIp;
+    public byte[] m_remoteTradeIp = new byte[16]; // 服务器交易IP
+    public short m_remoteTradeTCPPort; // 服务器交易TCP端口
+    public short m_remoteTradeUDPPort; // 服务器交易UDP端口
 
-    // 使用short类型存储端口号
-    private short mRemoteTradeTCPPort;
-    private short mRemoteTradeUDPPort;
-    private short mRemoteQueryTCPPort;
-    private short mLocalTradeUDPPort;
+    public byte[] m_remoteQueryIp = new byte[16]; // 服务器查询IP
+    public short m_remoteQueryTCPPort; // 服务器查询TCP端口
 
+    public byte[] m_LocalTradeIp = new byte[16]; // 本地交易IP
+    public short m_LocalTradeUDPPort; // 本地交易UDP端口
+
+    public boolean m_timestamp_switch; // 是否开启硬件时间戳测试功能
+    public boolean m_block_recv_switch; // 是否开启阻塞接收数据
+    public short m_req_cpu_id; // 上行绑核 填-1，不绑定
+    public short m_rsp_cpu_id; // 下行绑核 填-1，不绑定
+
+    @Override
+    protected List<String> getFieldOrder() {
+        return Arrays.asList(
+                "m_remoteTradeIp",
+                "m_remoteTradeTCPPort",
+                "m_remoteTradeUDPPort",
+                "m_remoteQueryIp",
+                "m_remoteQueryTCPPort",
+                "m_LocalTradeIp",
+                "m_LocalTradeUDPPort",
+                "m_timestamp_switch",
+                "m_block_recv_switch",
+                "m_req_cpu_id",
+                "m_rsp_cpu_id"
+        );
+    }
 
     public EESTradeSvrInfo() {
-        // Java中不需要手动初始化对象，但你可以选择设置默认值为0
-        this.mRemoteTradeIp = "";
-        this.mRemoteQueryIp = "";
-        this.mLocalTradeIp = "";
-
-        this.mRemoteTradeTCPPort = 0;
-        this.mRemoteTradeUDPPort = 0;
-        this.mRemoteQueryTCPPort = 0;
-        this.mLocalTradeUDPPort = 0;
-    }
-
-    // 如果需要将IP字符串转换为InetAddress对象，可以添加以下方法
-    public void setRemoteTradeIp(String ipStr)  {
-//        if (ipStr != null && !ipStr.isEmpty()) {
-//            byte[] bytes = Inet4Address.getByName(ipStr).getAddress();
-//            StringBuilder sb = new StringBuilder();
-//            for (byte b : bytes) {
-//                sb.setLength(sb.length() - 1); // 移除最后一个多余的 '.'
-//            }
-//            this.mRemoteTradeIp = sb.toString();
-//        }
-        this.mRemoteTradeIp=ipStr;
-    }
-
-    public void setRemoteQueryIp(String ipStr) {
-//        if (ipStr != null && !ipStr.isEmpty()) {
-//            byte[] bytes = Inet4Address.getByName(ipStr).getAddress();
-//            StringBuilder sb = new StringBuilder();
-//            for (byte b : bytes) {
-//                sb.append((b & 0xFF) + ".");
-//            }
-//            sb.setLength(sb.length() - 1);
-//            this.mRemoteQueryIp = sb.toString();
-//        }
-        this.mRemoteQueryIp=ipStr ;
-
-    }
-    public void setLocalTradeIp(String ipStr) {
-//        if (ipStr != null && !ipStr.isEmpty()) {
-//            byte[] bytes = Inet4Address.getByName(ipStr).getAddress();
-//            StringBuilder sb = new StringBuilder();
-//            for (byte b : bytes) {
-//                sb.append((b & 0xFF) + ".");
-//            }
-//            sb.setLength(sb.length() - 1);
-//            this.mLocalTradeIp = sb.toString();
-//        }
-      this.mLocalTradeIp=ipStr;
-
-    }
-    // Getter方法
-    public String getRemoteTradeIp() {
-        return mRemoteTradeIp;
-    }
-
-    public short getRemoteTradeTCPPort() {
-        return mRemoteTradeTCPPort;
-    }
-
-    public short getRemoteTradeUDPPort() {
-        return mRemoteTradeUDPPort;
-    }
-
-    public String getRemoteQueryIp() {
-        return mRemoteQueryIp;
-    }
-
-    public short getRemoteQueryTCPPort() {
-        return mRemoteQueryTCPPort;
-    }
-
-    public String getLocalTradeIp() {
-        return mLocalTradeIp;
-    }
-
-    public short getLocalTradeUDPPort() {
-        return mLocalTradeUDPPort;
+        super();
+        m_req_cpu_id = -1;
+        m_rsp_cpu_id = -1;
     }
 }

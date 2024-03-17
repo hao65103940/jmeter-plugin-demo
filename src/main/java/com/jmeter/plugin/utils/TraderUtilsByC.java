@@ -4,7 +4,11 @@ import com.jmeter.plugin.domain.EESTradeSvrInfo;
 import com.jmeter.plugin.utils.event.EESTraderEventImpl;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
+import com.sun.jna.Pointer;
+import com.sun.jna.win32.StdCallLibrary;
 
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 
@@ -14,6 +18,13 @@ import java.net.URL;
  * @description:
  */
 public class TraderUtilsByC {
+
+
+    public static void SetJnaEncoding() {
+        System.setProperty("jna.encoding", "GBK");
+    }
+
+
     /**
      * 加载本地库文件
      *
@@ -61,9 +72,14 @@ public class TraderUtilsByC {
         // 加载链接
 //        TraderApi TEST_SO = Native.load("D:\\IdeaProject\\jmeter-plugin-demo\\src\\main\\resources\\lib\\EESTraderApi.dll", TraderApi.class);
 
+        String filePath = System.getProperty("user.dir") + File.separator + "dll"+ File.separator + "EESTraderApi.dll";
 
+        TraderApi INSTANCE  = Native.load((Platform.isWindows() ? filePath : "/deployments/libEESTraderApi.so"), TraderApi.class);
+
+
+        Pointer CreateEESTraderApi();
         // 交接接口链接
-        int ConnServer(String traderServerIp, int traderServerPort, EESTraderEvent pEvent, String queryServerIp, int queryServerPort);
+        int ConnServer(String traderServerIp, int traderServerPort, EESTraderEvent  pEvent, String queryServerIp, int queryServerPort);
 
         int ConnServer(EESTradeSvrInfo eesTradeSvrInfo, EESTraderEvent eventCallback);
 
@@ -81,30 +97,36 @@ public class TraderUtilsByC {
 
 
     public static void main(String[] args) {
+        TraderUtilsByC.SetJnaEncoding();
         String traderServerIp = "101.230.113.155";
         int traderServerPort = 20000;
         String queryServerIp = "101.230.113.155";
         int queryServerPort = 20001;
-
+        String bits = System.getProperty("sun.arch.data.model");
+        System.out.println(bits);
 //
         EESTraderEventImpl eesTraderEvent = new EESTraderEventImpl();
 
         EESTradeSvrInfo eesTradeSvrInfo = new EESTradeSvrInfo();
-        eesTradeSvrInfo.setLocalTradeIp(traderServerIp);
-        eesTradeSvrInfo.setRemoteTradeIp(traderServerIp);
-        eesTradeSvrInfo.setRemoteQueryIp(traderServerIp);
+        eesTradeSvrInfo.m_LocalTradeIp=new byte[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        eesTradeSvrInfo.m_remoteTradeIp=new byte[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//        eesTradeSvrInfo.setLocalTradeIp(traderServerIp);
+//        eesTradeSvrInfo.setRemoteTradeIp(traderServerIp);
+//        eesTradeSvrInfo.setRemoteQueryIp(traderServerIp);
 //
-//        int result = TraderUtilsByC.loadNativeLibrary().ConnServer(traderServerIp, traderServerPort, null,queryServerIp, queryServerPort);
-//        int results = TraderUtilsByC.loadNativeLibrary().ConnServer(eesTradeSvrInfo, eesTraderEvent);
-//        System.out.println(result);
-//        System.out.println(results);
+        Pointer pointer = TraderApi.INSTANCE.CreateEESTraderApi();
+        System.out.println(pointer);
+//        int i = TraderApi.INSTANCE.ConnServer(traderServerIp, traderServerPort, eesTraderEvent, queryServerIp, queryServerPort);
+//        System.out.println(i);
+        int i1 = TraderApi.INSTANCE.ConnServer(eesTradeSvrInfo, eesTraderEvent);
+        System.out.println(i1);
 
-        try {
-            TraderApi load = Native.load("D:\\IdeaProject\\jmeter-plugin-demo\\target\\classes\\lib\\EESTraderApi.dll", TraderApi.class);
-            load.ConnServer(eesTradeSvrInfo, eesTraderEvent);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            TraderApi load = Native.load("D:\\IdeaProject\\jmeter-plugin-demo\\target\\classes\\lib\\EESTraderApi.dll", TraderApi.class);
+//            load.ConnServer(eesTradeSvrInfo, eesTraderEvent);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
 
     }

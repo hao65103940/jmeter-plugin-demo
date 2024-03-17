@@ -1,5 +1,6 @@
 package com.jmeter.plugin.gui;
 
+import com.jmeter.plugin.sampler.JmeterPluginSampler;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
@@ -63,19 +64,21 @@ public class JmeterPluginUI extends AbstractSamplerGui {
      */
     @Override
     public TestElement createTestElement() {
-//        ThriftSampler sampler = new ThriftSampler();
-//        this.setupSamplerProperties(sampler);
-//        return sampler;
-
-        return null;
+        JmeterPluginSampler sampler = new JmeterPluginSampler();
+        this.setupSamplerProperties(sampler);
+        return sampler;
     }
 
-//    private void setupSamplerProperties(ThriftSampler sampler) {
-//        this.configureTestElement(sampler);
-////        sampler.setServerIp(serverIp.getText());
-////        sampler.setPort(Integer.valueOf(port.getText()));
-////        sampler.setParam(param.getText());
-//    }
+    /**
+     * 设置sampler 参数
+     * @param sampler
+     */
+    private void setupSamplerProperties(JmeterPluginSampler sampler) {
+        this.configureTestElement(sampler);
+        sampler.setServerIp(serverIp.getText());
+        sampler.setPort(Integer.valueOf(port.getText()));
+        sampler.setParam(param.getText());
+    }
 
 
     /**
@@ -84,7 +87,8 @@ public class JmeterPluginUI extends AbstractSamplerGui {
      */
     @Override
     public void modifyTestElement(TestElement testElement) {
-
+        JmeterPluginSampler sampler = (JmeterPluginSampler) testElement;
+        this.setupSamplerProperties(sampler);
     }
 
     /**
@@ -94,10 +98,10 @@ public class JmeterPluginUI extends AbstractSamplerGui {
     @Override
     public void configure(TestElement element) {
         super.configure(element);
-//        ThriftSampler sampler = (ThriftSampler) element;
-//        this.serverIp.setText(sampler.getServerIp());
-//        this.port.setText(sampler.getPort().toString());
-//        this.param.setText(sampler.getParam());
+        JmeterPluginSampler sampler = (JmeterPluginSampler) element;
+        this.serverIp.setText(sampler.getServerIp());
+        this.port.setText(sampler.getPort().toString());
+        this.param.setText(sampler.getParam());
     }
 
     /**
@@ -107,7 +111,7 @@ public class JmeterPluginUI extends AbstractSamplerGui {
     public void clearGui() {
         super.clearGui();
         this.serverIp.setText("服务端ip");
-        this.port.setText("9099");
+        this.port.setText("8080");
         this.param.setText("参数");
     }
 }
